@@ -1,0 +1,145 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * igovindkadam design tokens.
+ * Palette: Midnight Navy #101827, White #FFFFFF, Scientific Orange #E99B47,
+ * Research Blue #183B54, Slate #64748B.
+ */
+@theme {
+  --color-midnight: #101827;
+  --color-midnight-soft: #1a2436;
+  --color-research: #183b54;
+  --color-research-deep: #10293d;
+  --color-scientific: #e99b47;
+  --color-scientific-soft: #f5c98a;
+  --color-slate-custom: #64748b;
+}
+
+@theme inline {
+  --font-display: var(--font-display);
+  --font-sans: var(--font-body);
+  --font-serif: var(--font-reading);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #101827;
+  color-scheme: light;
+}
+
+.dark {
+  --background: #101827;
+  --foreground: #f1f5f9;
+  color-scheme: dark;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background-color: var(--color-scientific);
+    color: var(--color-midnight);
+  }
+
+  :where(a, button, input, textarea, select, [tabindex]):focus-visible {
+    outline: 2px solid var(--color-scientific);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  .dark :where(a, button, input, textarea, select, [tabindex]):focus-visible {
+    outline-color: var(--color-scientific-soft);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer utilities {
+  /* Long-form research reading surface. */
+  .reading-surface {
+    font-family: var(--font-reading), Georgia, "Times New Roman", serif;
+    font-size: 1.0625rem;
+    line-height: 1.8;
+  }
+}
+
+@keyframes marquee-x {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes orbit-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse-node {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes dash-flow {
+  to {
+    stroke-dashoffset: -24;
+  }
+}
+
+@layer utilities {
+  /* Slow discipline ticker; neutralized by the reduced-motion rule above. */
+  .animate-marquee {
+    animation: marquee-x 46s linear infinite;
+  }
+
+  /* Gentle node pulse for workflow and architecture diagrams. */
+  .animate-pulse-node {
+    animation: pulse-node 2.8s ease-in-out infinite;
+  }
+
+  /* Flowing dashes for connection lines. */
+  .animate-dash-flow {
+    stroke-dasharray: 5 7;
+    animation: dash-flow 1.4s linear infinite;
+  }
+
+  /* Slow decorative rotation for the hero geometric visual. */
+  .animate-orbit {
+    animation: orbit-spin 160s linear infinite;
+    transform-origin: center;
+    transform-box: fill-box;
+  }
+}
