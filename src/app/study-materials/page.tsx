@@ -1,24 +1,42 @@
 import type { Metadata } from "next";
-import { GraduationCap } from "lucide-react";
-import { PlaceholderPage } from "@/components/layout/placeholder-page";
+import { StudyHero } from "@/components/study/study-hero";
+import { StudySubjects } from "@/components/study/study-subjects";
+import { ResourceIndex } from "@/components/study/resource-index";
+import { getVisibleStudyMaterialMeta } from "@/lib/content";
+import { siteIdentity } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Study Materials",
-  description: "Notes, guides, and learning resources by Govind Kadam.",
+  description: `Structured learning resources by ${siteIdentity.owner}: study notes, guides, tutorials, and references across mathematics, science, and emerging technologies.`,
+  openGraph: {
+    title: `Study Materials — ${siteIdentity.owner}`,
+    description:
+      "A growing knowledge library: notes, guides, tutorials, and references.",
+  },
 };
 
-export default function StudyMaterialsPage() {
+/** Study Materials library: hero, subject shelves, searchable index. */
+export default async function StudyMaterialsPage() {
+  const entries = await getVisibleStudyMaterialMeta();
+
   return (
-    <PlaceholderPage
-      eyebrow="Study Materials"
-      title="Study Materials"
-      description="Study notes, guides, and learning resources. Materials will be published here as they are prepared."
-      icon={GraduationCap}
-      plannedContent={[
-        "Subject-wise study notes",
-        "Tutorials and worked examples",
-        "Curated external learning resources",
-      ]}
-    />
+    <>
+      <StudyHero />
+
+      <section aria-label="Subjects">
+        <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-20">
+          <StudySubjects entries={entries} />
+        </div>
+      </section>
+
+      <section
+        aria-label="Resource index"
+        className="border-t border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-research-deep"
+      >
+        <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-20">
+          <ResourceIndex entries={entries} />
+        </div>
+      </section>
+    </>
   );
 }

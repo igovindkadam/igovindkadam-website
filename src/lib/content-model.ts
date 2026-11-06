@@ -4,7 +4,7 @@
  * Server loading/serialization lives in src/lib/content.ts.
  */
 
-export type Collection = "research" | "publications";
+export type Collection = "research" | "publications" | "study-materials" | "vision";
 
 export type ResearchStatus =
   | "exploring"
@@ -72,6 +72,66 @@ export interface TocHeading {
   depth: 2 | 3;
   text: string;
   slug: string;
+}
+
+export type StudySubject =
+  | "mathematics"
+  | "physics"
+  | "computer-science"
+  | "research-methodology"
+  | "ai-ml"
+  | "agi"
+  | "robotics"
+  | "quantum-computing"
+  | "quantum-ai"
+  | "scientific-computing"
+  | "aerospace"
+  | "interdisciplinary";
+
+export type StudyResourceType =
+  | "notes"
+  | "guide"
+  | "tutorial"
+  | "explanation"
+  | "derivation"
+  | "problem-set"
+  | "reading-list"
+  | "exercises"
+  | "reference";
+
+export type StudyDifficulty = "introductory" | "intermediate" | "advanced";
+
+export type StudyStatus = "published" | "in-progress" | "archived";
+
+export interface StudyMaterialMeta {
+  slug: string;
+  title: string;
+  subtitle?: string;
+  description: string;
+  subject: StudySubject;
+  topics: string[];
+  resourceType: StudyResourceType;
+  difficulty?: StudyDifficulty;
+  status: StudyStatus;
+  created: string;
+  updated?: string;
+  author: string;
+  references: string[];
+  relatedResources: string[];
+  pdf?: string;
+  featured: boolean;
+  draft: boolean;
+}
+
+export interface VisionMeta {
+  title: string;
+  description: string;
+}
+
+/** Estimated reading minutes from raw MDX body text (200 wpm, min 1). */
+export function readingMinutes(body: string): number {
+  const words = body.split(/\s+/).filter((word) => word !== "").length;
+  return Math.max(1, Math.round(words / 200));
 }
 
 /** Case-insensitive query match across searchable metadata fields. */

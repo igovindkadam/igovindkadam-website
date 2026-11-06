@@ -25,7 +25,13 @@ import type {
   ResearchKind,
   ResearchMeta,
   ResearchStatus,
+  StudyDifficulty,
+  StudyMaterialMeta,
+  StudyResourceType,
+  StudyStatus,
+  StudySubject,
   TocHeading,
+  VisionMeta,
 } from "./content-model";
 
 export type {
@@ -36,7 +42,13 @@ export type {
   ResearchKind,
   ResearchMeta,
   ResearchStatus,
+  StudyDifficulty,
+  StudyMaterialMeta,
+  StudyResourceType,
+  StudyStatus,
+  StudySubject,
   TocHeading,
+  VisionMeta,
 } from "./content-model";
 
 const contentRoot = path.join(process.cwd(), "src", "content");
@@ -80,6 +92,41 @@ const PUBLICATION_STATUSES: PublicationStatus[] = [
   "in-review",
   "draft",
 ];
+
+const STUDY_SUBJECTS: StudySubject[] = [
+  "mathematics",
+  "physics",
+  "computer-science",
+  "research-methodology",
+  "ai-ml",
+  "agi",
+  "robotics",
+  "quantum-computing",
+  "quantum-ai",
+  "scientific-computing",
+  "aerospace",
+  "interdisciplinary",
+];
+
+const STUDY_RESOURCE_TYPES: StudyResourceType[] = [
+  "notes",
+  "guide",
+  "tutorial",
+  "explanation",
+  "derivation",
+  "problem-set",
+  "reading-list",
+  "exercises",
+  "reference",
+];
+
+const STUDY_DIFFICULTIES: StudyDifficulty[] = [
+  "introductory",
+  "intermediate",
+  "advanced",
+];
+
+const STUDY_STATUSES: StudyStatus[] = ["published", "in-progress", "archived"];
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
@@ -175,6 +222,90 @@ function validateResearchMeta(
     abstract: optionalString(data, "abstract", file),
     pdf: optionalString(data, "pdf", file),
     draft: draft ?? false,
+  };
+}
+
+function optionalEnum<T extends string>(
+  data: Record<string, unknown>,
+  field: string,
+  allowed: readonly T[],
+  file: string,
+): T | undefined {
+  const value = data[field];
+  if (value === undefined) {
+    return undefined;
+  }
+  if (typeof value !== "string" || !allowed.includes(value as T)) {
+    throw new Error(
+      `${file}: frontmatter field "${field}" must be one of: ${allowed.join(", ")}`,
+    );
+  }
+  return value as T;
+}
+
+function optionalBoolean(
+  data: Record<string, unknown>,
+  field: string,
+  file: string,
+): boolean | undefined {
+  const value = data[field];
+  if (value === undefined) {
+    return undefined;
+  }
+  if (typeof value !== "boolean") {
+    throw new Error(`${file}: frontmatter field "${field}" must be a boolean`);
+  }
+  return value;
+}
+
+function stringArrayField(
+  data: Record<string, unknown>,
+  field: string,
+  file: string,
+): string[] {
+  try {
+    return asStringArray(data[field]);
+  } catch {
+    throw new Error(`${file}: frontmatter field "${field}" must be a string array`);
+  }
+}
+
+function validateStudyMaterialMeta(
+  data: unknown,
+  slug: string,
+  file: string,
+): StudyMaterialMeta {
+  if (!isRecord(data)) {
+    throw new Error(`${file}: frontmatter must be a mapping`);
+  }
+  return {
+    slug,
+    title: requiredString(data, "title", file),
+    subtitle: optionalString(data, "subtitle", file),
+    description: requiredString(data, "description", file),
+    subject: requiredEnum(data, "subject", STUDY_SUBJECTS, file),
+    topics: stringArrayField(data, "topics", file),
+    resourceType: requiredEnum(data, "resourceType", STUDY_RESOURCE_TYPES, file),
+    difficulty: optionalEnum(data, "difficulty", STUDY_DIFFICULTIES, file),
+    status: requiredEnum(data, "status", STUDY_STATUSES, file),
+    created: requiredString(data, "created", file),
+    updated: optionalString(data, "updated", file),
+    author: optionalString(data, "author", file) ?? "Govind Kadam",
+    references: stringArrayField(data, "references", file),
+    relatedResources: stringArrayField(data, "relatedResources", file),
+    pdf: optionalString(data, "pdf", file),
+    featured: optionalBoolean(data, "featured", file) ?? false,
+    draft: optionalBoolean(data, "draft", file) ?? false,
+  };
+}
+
+function validateVisionMeta(data: unknown, file: string): VisionMeta {
+  if (!isRecord(data)) {
+    throw new Error(`${file}: frontmatter must be a mapping`);
+  }
+  return {
+    title: requiredString(data, "title", file),
+    description: requiredString(data, "description", file),
   };
 }
 
@@ -344,6 +475,31 @@ export async function getAllPublicationMeta(): Promise<PublicationMeta[]> {
   return entries.sort((a, b) => (b.year ?? 0) - (a.year ?? 0));
 }
 
+export async function getStudyMaterialEntry(
+  slug: string,
+): Promise<ContentEntry<StudyMaterialMeta>> {
+  const { file, raw } = readRaw("study-materials", slug);
+  const { data, content: body } = matter(raw);
+  const meta = validateStudyMaterialMeta(data, slug, file);
+  const [source, headings] = await Promise.all([
+    serializeBody(body),
+    Promise.resolve(extractHeadings(body)),
+  ]);
+  return { meta, body, source, headings };
+}
+
+/** The single long-form vision essay. */
+export async function getVisionEssay(): Promise<ContentEntry<VisionMeta>> {
+  const { file, raw } = readRaw("vision", "vision");
+  const { data, content: body } = matter(raw);
+  const meta = validateVisionMeta(data, file);
+  const [source, headings] = await Promise.all([
+    serializeBody(body),
+    Promise.resolve(extractHeadings(body)),
+  ]);
+  return { meta, body, source, headings };
+}
+
 /** Entries visible in public listings (drafts excluded). */
 export async function getVisibleResearchMeta(): Promise<ResearchMeta[]> {
   return (await getAllResearchMeta()).filter((entry) => !entry.draft);
@@ -351,4 +507,24 @@ export async function getVisibleResearchMeta(): Promise<ResearchMeta[]> {
 
 export async function getVisiblePublicationMeta(): Promise<PublicationMeta[]> {
   return (await getAllPublicationMeta()).filter((entry) => !entry.draft);
+}
+
+/** Metadata for all study materials, featured first, then newest first. */
+export async function getAllStudyMaterialMeta(): Promise<StudyMaterialMeta[]> {
+  const entries = await Promise.all(
+    getContentSlugs("study-materials").map(async (slug) => {
+      const { file, raw } = readRaw("study-materials", slug);
+      return validateStudyMaterialMeta(matter(raw).data, slug, file);
+    }),
+  );
+  return entries.sort((a, b) => {
+    if (a.featured !== b.featured) {
+      return a.featured ? -1 : 1;
+    }
+    return b.created.localeCompare(a.created);
+  });
+}
+
+export async function getVisibleStudyMaterialMeta(): Promise<StudyMaterialMeta[]> {
+  return (await getAllStudyMaterialMeta()).filter((entry) => !entry.draft);
 }

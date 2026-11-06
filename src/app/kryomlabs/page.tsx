@@ -1,81 +1,71 @@
 import type { Metadata } from "next";
-import { Telescope } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { StatusBadge } from "@/components/ui/status-badge";
-import { kryomLabsDivisions, statusMeta } from "@/data/kryomlabs";
+import { LabsHero } from "@/components/kryomlabs/labs-hero";
+import {
+  LabsDivisions,
+  LabsFeature,
+  LabsIntro,
+} from "@/components/kryomlabs/labs-sections";
+import { LabsVisualization } from "@/components/kryomlabs/labs-visualization";
+import { LabsFuture, LabsPhilosophy } from "@/components/kryomlabs/labs-philosophy";
+import { siteIdentity } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "KryomLabs",
-  description:
-    "The KryomLabs research and engineering ecosystem, including the featured KryomCode project.",
+  description: `KryomLabs — ${siteIdentity.owner}'s independent engineering and research ecosystem: the released KryomCode project, confirmed divisions, philosophy, and future direction.`,
+  openGraph: {
+    title: "KryomLabs — Engineering Intelligence. Shaping Tomorrow.",
+    description:
+      "Independent research and engineering ecosystem: released work, confirmed divisions, and honest statuses.",
+  },
 };
 
+/** KryomLabs ecosystem: intro, feature, divisions, map, philosophy, future. */
 export default function KryomLabsPage() {
   return (
-    <div className="mx-auto max-w-4xl px-4 py-14 sm:px-6 sm:py-20">
-      <div className="flex items-start gap-4">
-        <span
-          aria-hidden
-          className="flex size-12 shrink-0 items-center justify-center rounded-lg bg-research text-white dark:bg-scientific dark:text-midnight"
-        >
-          <Telescope className="size-6" />
-        </span>
-        <div>
-          <p className="text-sm font-semibold tracking-wide text-research uppercase dark:text-scientific-soft">
-            Ecosystem
-          </p>
-          <h1 className="mt-1 font-display text-4xl font-bold text-balance text-midnight sm:text-5xl dark:text-white">
-            KryomLabs
-          </h1>
+    <>
+      <LabsHero />
+
+      <section aria-label="Ecosystem introduction">
+        <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-20">
+          <LabsIntro />
         </div>
-      </div>
+      </section>
 
-      <p className="mt-6 max-w-2xl text-lg leading-relaxed text-slate-600 dark:text-slate-300">
-        KryomLabs is the research and engineering ecosystem behind this
-        website. KryomCode is its featured project. Division details, scope,
-        and statuses will be published once confirmed by the owner.
-      </p>
+      <section
+        aria-label="Featured project"
+        className="border-y border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-research-deep"
+      >
+        <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-20">
+          <LabsFeature />
+        </div>
+      </section>
 
-      <div className="mt-8 rounded-lg border border-slate-200 bg-slate-50 p-6 dark:border-slate-700 dark:bg-midnight-soft">
-        <p className="text-sm font-semibold tracking-wide text-slate-500 uppercase dark:text-slate-400">
-          Division status key
-        </p>
-        <ul className="mt-3 space-y-2 text-sm text-slate-600 dark:text-slate-300">
-          {(
-            Object.entries(statusMeta) as [
-              keyof typeof statusMeta,
-              (typeof statusMeta)[keyof typeof statusMeta],
-            ][]
-          ).map(([status, meta]) => (
-            <li key={status} className="flex items-center gap-3">
-              <StatusBadge status={status} />
-              <span>{meta.hint}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
+      <section aria-label="Divisions">
+        <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-20">
+          <LabsDivisions />
+        </div>
+      </section>
 
-      <div className="mt-8 grid gap-4 sm:grid-cols-2">
-        {kryomLabsDivisions.map((division) => (
-          <Card
-            key={division.name}
-            title={division.name}
-            description={division.description}
-            meta="KryomLabs division · placeholder"
-            badge={<StatusBadge status={division.status} />}
-          />
-        ))}
-      </div>
+      <section
+        aria-label="Ecosystem map"
+        className="border-y border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-research-deep"
+      >
+        <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-20">
+          <LabsVisualization />
+        </div>
+      </section>
 
-      <div className="mt-10 flex flex-wrap gap-3">
-        <Button href="/projects" variant="secondary">
-          View projects
-        </Button>
-        <Button href="/contact" variant="ghost">
-          Contact Govind
-        </Button>
-      </div>
-    </div>
+      <section aria-label="Engineering philosophy">
+        <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-20">
+          <LabsPhilosophy />
+        </div>
+      </section>
+
+      <section aria-label="Future direction" className="border-t border-slate-200 dark:border-slate-800">
+        <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-20">
+          <LabsFuture />
+        </div>
+      </section>
+    </>
   );
 }

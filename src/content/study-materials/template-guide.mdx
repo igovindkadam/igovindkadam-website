@@ -1,0 +1,52 @@
+---
+title: "Template guide: how study resources render"
+subtitle: "A formatting reference for the library system — not a study resource"
+description: "Draft template demonstrating every element the study-material detail template supports."
+subject: "research-methodology"
+topics: ["template", "formatting"]
+resourceType: "guide"
+difficulty: "introductory"
+status: "published"
+created: "2026-11-06"
+keywords: []
+references: []
+relatedResources: []
+featured: false
+draft: true
+---
+
+> This page is a **template demonstration**. It shows how study
+> resources render on this site. Nothing here is a study claim.
+
+## How to use this template
+
+Copy this file's frontmatter into a new file under
+`src/content/study-materials/`, replace every field with genuine
+content, and set `draft: false` (or remove the flag) to publish.
+See `docs/updating-learning-and-ecosystem-content.md`.
+
+## Worked elements
+
+Tables, code, and mathematics render through the same pipeline as
+research articles:
+
+| Element | Renderer |
+|---------|----------|
+| Tables  | GFM      |
+| Math    | KaTeX    |
+
+```python
+def study(topic: str) -> str:
+    return f"read, derive, verify: {topic}"
+```
+
+Inline math like $a^2 + b^2 = c^2$ and display blocks:
+
+$$
+\int_0^1 x^2\,dx = \frac{1}{3}
+$$
+
+## References in this template
+
+Template guides carry no references. Real resources list theirs
+in frontmatter and render them below the body.
