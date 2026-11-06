@@ -1,0 +1,72 @@
+---
+title: "Template guide: how research articles render"
+subtitle: "A formatting reference for the article system — not a research finding"
+author: "Govind Kadam"
+kind: "guide"
+domains: ["ai-ml"]
+status: "exploring"
+created: "2026-11-06"
+keywords: ["template", "formatting", "guide"]
+abstract: "This draft demonstrates every element the article template supports: headings, tables, code, mathematics, quotes, links, and references. It is explicitly not a research result."
+draft: true
+---
+
+> This page is a **template demonstration**. It shows how research
+> articles render on this site. Nothing here is a research claim.
+
+## Introduction
+
+Research articles on this site are written in MDX with validated
+frontmatter. The body supports the full academic toolkit, as shown
+in the sections below.
+
+## Background
+
+Tables render with the site type scale in both themes:
+
+| Stage    | Input    | Output   |
+|----------|----------|----------|
+| Research | Question | Sources  |
+| Plan     | Sources  | Proposal |
+| Verify   | Proposal | Report   |
+
+## Research question
+
+Template guides ask no research question. Real entries state one
+plainly in this section.
+
+## Methodology
+
+Code renders in fenced blocks with the site theme:
+
+```python
+def evidence_chain(question: str) -> list[str]:
+    return ["research", "plan", "review", "verify"]
+```
+
+Inline references look like `src/lib/content.ts`, and links work
+[as usual](/research).
+
+## Main discussion
+
+Mathematical notation renders with KaTeX, inline like $E = mc^2$
+and in display blocks:
+
+$$
+\sum_{i=1}^{n} i = \frac{n(n+1)}{2}
+$$
+
+## Limitations
+
+This template demonstrates structure only. It contains no
+findings, no data, and no conclusions about any subject.
+
+## Conclusion
+
+Add a real entry by creating a new `.mdx` file under
+`src/content/research/` with complete, honest frontmatter.
+
+## References
+
+1. Template reference one — illustrative only.
+2. Template reference two — illustrative only.

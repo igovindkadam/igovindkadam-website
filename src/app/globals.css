@@ -143,3 +143,23 @@
     transform-box: fill-box;
   }
 }
+
+@media print {
+  header,
+  footer {
+    display: none !important;
+  }
+
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  main {
+    max-width: 100% !important;
+  }
+
+  a {
+    text-decoration: underline;
+  }
+}
